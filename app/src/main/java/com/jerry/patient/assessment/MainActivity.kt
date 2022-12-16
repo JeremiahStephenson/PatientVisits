@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,6 +47,7 @@ fun Content() {
         LocalAppBarTitle provides { title = it },
     ) {
         Scaffold(
+            contentWindowInsets = WindowInsets.navigationBars,
             topBar = {
                 val showBackArrow by remember(navController.appCurrentDestinationAsState().value) {
                     derivedStateOf { navController.previousBackStackEntry != null }
@@ -81,6 +82,7 @@ fun Toolbar(
     val topAppBarElementColor = MaterialTheme.colorScheme.onPrimary
     val appBarContainerColor = MaterialTheme.colorScheme.primary
     TopAppBar(
+        windowInsets = WindowInsets.statusBars,
         navigationIcon = {
             AnimatedVisibility(
                 visible = showBackArrow(),
