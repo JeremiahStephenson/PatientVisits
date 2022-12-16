@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.core
+package com.jerry.patient.assessment.util
 
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter

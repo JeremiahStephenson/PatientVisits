@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.core
+package com.jerry.patient.assessment.extensions
 
 import com.jerry.patient.assessment.service.data.NameDto
 

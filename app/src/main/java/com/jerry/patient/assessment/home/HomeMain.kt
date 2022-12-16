@@ -5,7 +5,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -19,11 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.core.LocalAppBarTitle
-import com.jerry.patient.assessment.core.READABLE_TIME_PATTERN_PARSER
-import com.jerry.patient.assessment.core.READBLE_DATE_TIME_PATTERN_PARSER
+import com.jerry.patient.assessment.cache.Feedback
+import com.jerry.patient.assessment.compose.LocalAppBarTitle
+import com.jerry.patient.assessment.compose.MediumButton
 import com.jerry.patient.assessment.destinations.FormMainDestination
 import com.jerry.patient.assessment.service.data.*
+import com.jerry.patient.assessment.util.READABLE_TIME_PATTERN_PARSER
+import com.jerry.patient.assessment.util.READBLE_DATE_TIME_PATTERN_PARSER
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -58,7 +63,7 @@ fun HomeMain(
                 .padding(16.dp)
         ) {
             items(
-                items = state.value.data?.entries ?: emptyList(),
+                items = state.value.data?.visits?.entries ?: emptyList(),
                 key = { it.id }
             ) { item ->
                 when (item) {
@@ -68,9 +73,20 @@ fun HomeMain(
                     is AppointmentDto -> AppointmentInfo(item)
                 }
             }
+            state.value.data?.feedback?.let {
+                item {
+                    FeedbackInfo(feedback = it)
+                }
+            }
             state.value.data?.let {
                 item {
-                    Button(
+                    MediumButton(
+                        text = stringResource(
+                            when (state.value.data?.feedback) {
+                                null -> R.string.evaluate_visit
+                                else -> R.string.edit_feedback
+                            }
+                        ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp),
@@ -78,9 +94,7 @@ fun HomeMain(
                             navController.navigate(
                                 FormMainDestination(visitInfo = it)
                             )
-                        }) {
-                        Text(stringResource(R.string.evaluate_visit))
-                    }
+                        })
                 }
             }
         }
@@ -158,6 +172,16 @@ private fun DiagnosisInfo(data: DiagnosisDto) {
 }
 
 @Composable
+private fun FeedbackInfo(feedback: Feedback) {
+    Text(
+        modifier = Modifier.padding(top = 8.dp),
+        text = buildLargeTitleAnnotatedString(stringResource(R.string.patient_feedback)) {
+            append(feedback.feedback)
+        }
+    )
+}
+
+@Composable
 private fun ErrorIndicator(onRetry: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -168,9 +192,10 @@ private fun ErrorIndicator(onRetry: () -> Unit) {
             contentDescription = null
         )
         Text(text = stringResource(R.string.error_message))
-        Button(onClick = onRetry) {
-            Text(text = stringResource(R.string.retry))
-        }
+        MediumButton(
+            text = stringResource(R.string.retry),
+            onClick = onRetry
+        )
     }
 }
 

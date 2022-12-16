@@ -1,7 +1,6 @@
-package com.jerry.patient.assessment.core
+package com.jerry.patient.assessment.compose
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
@@ -10,9 +9,12 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jerry.patient.assessment.ui.theme.Pink500
+import com.jerry.patient.assessment.R
+import com.jerry.patient.assessment.compose.theme.Pink500
+import com.jerry.patient.assessment.extensions.unboundClickable
 
 @Composable
 fun RatingBar(
@@ -26,12 +28,18 @@ fun RatingBar(
         horizontalArrangement = Arrangement.Center
     ) {
         items(rating) {
-            RatingItem(filled = true) {
+            RatingItem(
+                contentDescription = "${it + 1}",
+                filled = true
+            ) {
                 onRatingChange(it + 1)
             }
         }
         items(stars - rating) {
-            RatingItem(filled = false) {
+            RatingItem(
+                contentDescription = "${it + 1}",
+                filled = false
+            ) {
                 onRatingChange(rating + it + 1)
             }
         }
@@ -40,6 +48,7 @@ fun RatingBar(
 
 @Composable
 private fun RatingItem(
+    contentDescription: String,
     filled: Boolean = false,
     onRatingChange: () -> Unit
 ) {
@@ -51,7 +60,7 @@ private fun RatingItem(
             true -> Icons.Default.Favorite
             else -> Icons.Default.FavoriteBorder
         },
-        contentDescription = null,
+        contentDescription = contentDescription,
         tint = Pink500
     )
 }

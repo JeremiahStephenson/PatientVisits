@@ -6,6 +6,7 @@
     <string name="error_message">There was an error. Please try again.</string>
     <string name="retry">Retry</string>
     <string name="evaluate_visit">Give Feedback</string>
+    <string name="edit_feedback">Edit Feedback</string>
 
     <string name="thank_you">Thank You.</string>
     <string name="submit">Submit</string>
@@ -17,12 +18,24 @@
     <string name="type_of_visit">Type of visit</string>
     <string name="diagnosis">Diagnosis</string>
     <string name="back">Back</string>
+    <string name="forward">Forward</string>
+    <string name="positive">Positive</string>
+    <string name="negative">Negative</string>
     <string name="are_you_sure">Are you sure you want to exit before submitting feedback?</string>
+    <string name="min_char_requirement">30 minimum characters required</string>
+    <string name="patient_feedback">Patient Feedback</string>
 
     <string name="form_question_1_1">Hi %1$s, on a scale of 1–10, would you recommend Dr %2$s to a friend or family member?</string>
     <string name="form_question_1_2">1 = Would not recommend</string>
     <string name="form_question_1_3">10 = Would strongly recommend</string>
 
-    <string name="form_question_2_1">You were diagnosed with %1$s.</string>
-    <string name="form_question_2_2">Did Dr %1$s explain how to manage this diagnosis in a way you could understand?</string>
+    <string name="form_question_2">You were diagnosed with %1$s.\nDid Dr %2$s explain how to manage this diagnosis in a way you could understand?</string>
+
+    <string name="form_question_3">We appreciate the feedback,\none last question: how do you feel about being diagnosed with %1$s?</string>
+
+    <string name="form_result_title">Thanks again!\nHere’s what we heard:</string>
+    <string name="form_result_rating">Overall:</string>
+    <string name="form_result_understanding">Understanding:</string>
+    <string name="form_result_feedback">Feedback:</string>
+    <string name="rating_accessibility">%1$d out of 10</string>
 </resources>

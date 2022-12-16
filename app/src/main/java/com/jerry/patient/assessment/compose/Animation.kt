@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.core
+package com.jerry.patient.assessment.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope

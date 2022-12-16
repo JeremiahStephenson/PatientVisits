@@ -4,50 +4,58 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.core.*
-import com.jerry.patient.assessment.service.data.VisitsDto
+import com.jerry.patient.assessment.compose.*
+import com.jerry.patient.assessment.extensions.unboundClickable
+import com.jerry.patient.assessment.service.VisitsData
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(
+    ExperimentalPagerApi::class,
+)
 @Destination
 @Composable
 fun FormMain(
-    visitInfo: VisitsDto,
+    visitInfo: VisitsData,
     navController: DestinationsNavigator,
     viewModel: FormViewModel = koinViewModel()
 ) {
     LocalAppBarTitle.current(stringResource(R.string.feedback))
 
+    val state = getFormState(viewModel)
+
     var showDialog by remember { mutableStateOf(false) }
-    BackHandler {
+    BackHandler(state.feedBackChanged) {
         showDialog = true
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.feedbackSaved.collectLatest {
+            navController.popBackStack()
+        }
     }
 
     Column(
@@ -66,16 +74,34 @@ fun FormMain(
             userScrollEnabled = false
         ) { page ->
             when (page) {
-                0 -> Rating(visitInfo, rememberCurrentPage(pagerState, page)) {
-                    forwardEnabled = it
-                }
-                1 -> Understanding(visitInfo, rememberCurrentPage(pagerState, page)) {
-                    forwardEnabled = it
-                }
-                2 -> Feelings(rememberCurrentPage(pagerState, page)) {
-                    forwardEnabled = it
-                }
-                3 -> Summary()
+                0 -> Rating(
+                    visitInfo = visitInfo.visits,
+                    isCurrentPage = rememberCurrentPage(pagerState, page),
+                    onRated = { viewModel.saveRating(it) },
+                    getRating = { state.feedBack.rating },
+                    onEnableOrDisableContinue = {
+                        forwardEnabled = it
+                    }
+                )
+                1 -> Understanding(
+                    visitInfo = visitInfo.visits,
+                    isCurrentPage = rememberCurrentPage(pagerState, page),
+                    onUnderstanding = { viewModel.saveUnderstanding(it) },
+                    getUnderstanding = { state.feedBack.understanding },
+                    onEnableOrDisableContinue = {
+                        forwardEnabled = it
+                    }
+                )
+                2 -> Feedback(
+                    visitInfo = visitInfo.visits,
+                    isCurrentPage = rememberCurrentPage(pagerState, page),
+                    onFeedback = { viewModel.saveFeedback(it) },
+                    getFeedback = { state.feedBack.feedback },
+                    onEnableOrDisableContinue = {
+                        forwardEnabled = it
+                    }
+                )
+                3 -> Summary(state.feedBack)
             }
         }
         val scope = rememberCoroutineScope()
@@ -85,7 +111,7 @@ fun FormMain(
             onBackward = { scope.moveBackward(pagerState) },
             onForward = { scope.moveForward(pagerState) },
             onSubmit = {
-                // todo
+                viewModel.submit()
             }
         )
         ProgressIndicator(
@@ -103,117 +129,6 @@ fun FormMain(
             }
         )
     }
-}
-
-@Composable
-fun Rating(
-    visitInfo: VisitsDto,
-    isCurrentPage: Boolean,
-    onEnableOrDisableContinue: (Boolean) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            text = stringResource(
-                R.string.form_question_1_1,
-                visitInfo.patient.name.givenName,
-                visitInfo.doctor.name.givenName
-            )
-        )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.form_question_1_2)
-        )
-        Text(
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.form_question_1_3)
-        )
-        var rating by rememberSaveable { mutableStateOf(0) }
-        LaunchedEffect(isCurrentPage) {
-            onEnableOrDisableContinue(rating > 0)
-        }
-
-        RatingBar(
-            rating = rating,
-            modifier = Modifier
-                .padding(top = 24.dp)
-                .fillMaxWidth()
-        ) {
-            rating = it
-            onEnableOrDisableContinue(rating > 0)
-        }
-    }
-}
-
-@Composable
-fun Understanding(
-    visitInfo: VisitsDto,
-    isCurrentPage: Boolean,
-    onEnableOrDisableContinue: (Boolean) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            style = MaterialTheme.typography.titleLarge,
-            text = stringResource(R.string.thank_you)
-        )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            text = stringResource(
-                R.string.form_question_2_1,
-                visitInfo.diagnosis.code.diagnosis
-            )
-        )
-        Text(
-            modifier = Modifier.padding(top = 8.dp),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            text = stringResource(
-                R.string.form_question_2_2,
-                visitInfo.doctor.name.givenName
-            )
-        )
-        var positive by rememberSaveable { mutableStateOf<Boolean?>(null) }
-        LaunchedEffect(isCurrentPage) {
-            onEnableOrDisableContinue(positive != null)
-        }
-        LikeButtons(positive = positive) {
-            positive = it
-            onEnableOrDisableContinue(true)
-        }
-    }
-}
-
-@Composable
-fun Feelings(
-    isCurrentPage: Boolean,
-    onEnableOrDisableContinue: (Boolean) -> Unit
-) {
-    LaunchedEffect(isCurrentPage) {
-        onEnableOrDisableContinue(false)
-    }
-}
-
-@Composable
-fun Summary() {
-
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -238,7 +153,8 @@ private fun ButtonRow(
         }
         FadeAnimatedVisibility(visible = showBackArrow) {
             ProgressButton(
-                drawableRes = R.drawable.ic_baseline_arrow_back_24
+                drawableRes = R.drawable.ic_baseline_arrow_back_24,
+                contentDescription = stringResource(R.string.back)
             ) {
                 onBackward()
             }
@@ -255,7 +171,8 @@ private fun ButtonRow(
             FadeAnimatedVisibility(visible = showForwardArrow) {
                 ProgressButton(
                     enabled = forwardEnabled,
-                    drawableRes = R.drawable.ic_baseline_arrow_forward_24
+                    drawableRes = R.drawable.ic_baseline_arrow_forward_24,
+                    contentDescription = stringResource(R.string.forward)
                 ) {
                     onForward()
                 }
@@ -279,6 +196,7 @@ private fun ButtonRow(
 private fun ProgressButton(
     @DrawableRes drawableRes: Int,
     enabled: Boolean = true,
+    contentDescription: String,
     onClick: () -> Unit
 ) {
     Icon(
@@ -286,7 +204,7 @@ private fun ProgressButton(
             .unboundClickable(enabled) { onClick() }
             .padding(16.dp),
         painter = painterResource(drawableRes),
-        contentDescription = null,
+        contentDescription = contentDescription,
         tint = when (enabled) {
             true -> LocalContentColor.current
             else -> LocalContentColor.current.copy(alpha = 0.4F)
@@ -303,56 +221,6 @@ private fun ProgressIndicator(
     LinearProgressIndicator(
         modifier = Modifier.fillMaxWidth(),
         progress = progress
-    )
-}
-
-@Composable
-private fun LikeButtons(
-    positive: Boolean?,
-    onSelected: (Boolean) -> Unit
-) {
-    Row(modifier = Modifier.padding(24.dp)) {
-        LikeButton(
-            selected = positive == true,
-            tint = Color.Green
-        ) {
-            onSelected(true)
-        }
-        Spacer(modifier = Modifier.width(50.dp))
-        LikeButton(
-            selected = positive == false,
-            tint = Color.Red,
-            up = false
-        ) {
-            onSelected(false)
-        }
-    }
-}
-
-@Composable
-private fun LikeButton(
-    selected: Boolean,
-    tint: Color,
-    up: Boolean = true,
-    onSelected: () -> Unit
-) {
-    Icon(
-        modifier = Modifier
-            .rotate(if (up) 0F else 180F)
-            .clip(CircleShape)
-            .clickable {
-                onSelected()
-            }
-            .run {
-                when (selected) {
-                    true -> background(tint.copy(alpha = 0.3F))
-                    else -> this
-                }
-            }
-            .padding(16.dp),
-        imageVector = Icons.Default.ThumbUp,
-        contentDescription = null,
-        tint = tint
     )
 }
 
@@ -376,20 +244,18 @@ private fun AreYouSureDialog(
                 text = stringResource(R.string.are_you_sure),
                 textAlign = TextAlign.Center
             )
-            Button(
+            MediumButton(
                 modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.yes),
                 onClick = goBack
-            ) {
-                Text(stringResource(R.string.yes))
-            }
-            Button(
+            )
+            MediumButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
+                text = stringResource(R.string.no),
                 onClick = dismiss
-            ) {
-                Text(stringResource(R.string.no))
-            }
+            )
         }
     }
 }
@@ -424,3 +290,12 @@ private fun rememberCurrentPage(
 ): Boolean {
     return remember { derivedStateOf { pagerState.currentPage == page && pagerState.currentPageOffset == 0F } }.value
 }
+
+@OptIn(ExperimentalLifecycleComposeApi::class)
+@Composable
+private fun getFormState(viewModel: FormViewModel): FormState {
+    val feedBackChangedState = viewModel.feedbackHasChanged.collectAsStateWithLifecycle()
+    val feedBackState = viewModel.feedbackFlow.collectAsStateWithLifecycle()
+    return FormState(feedBackChangedState, feedBackState)
+}
+

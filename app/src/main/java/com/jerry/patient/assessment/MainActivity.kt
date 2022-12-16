@@ -16,11 +16,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.jerry.patient.assessment.core.LocalAppBarTitle
-import com.jerry.patient.assessment.core.unboundClickable
-import com.jerry.patient.assessment.ui.theme.AssessmentTheme
+import com.jerry.patient.assessment.compose.LocalAppBarTitle
+import com.jerry.patient.assessment.extensions.unboundClickable
+import com.jerry.patient.assessment.compose.theme.AssessmentTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine

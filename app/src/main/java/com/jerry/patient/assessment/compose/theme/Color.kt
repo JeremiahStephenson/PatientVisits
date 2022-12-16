@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.ui.theme
+package com.jerry.patient.assessment.compose.theme
 
 import androidx.compose.ui.graphics.Color
 

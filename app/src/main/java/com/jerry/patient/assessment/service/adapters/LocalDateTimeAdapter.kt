@@ -1,6 +1,6 @@
 package com.jerry.patient.assessment.service.adapters
 
-import com.jerry.patient.assessment.core.LOCAL_DATE_TIME_UTC_PARSER
+import com.jerry.patient.assessment.util.LOCAL_DATE_TIME_UTC_PARSER
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 import java.time.LocalDateTime
