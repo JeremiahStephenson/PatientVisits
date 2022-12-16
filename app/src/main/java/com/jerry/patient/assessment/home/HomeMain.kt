@@ -14,6 +14,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.core.*
 import com.jerry.patient.assessment.destinations.FormMainDestination
@@ -24,7 +26,10 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalLifecycleComposeApi::class
+)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -32,7 +37,7 @@ fun HomeMain(
     navController: DestinationsNavigator,
     viewModel: HomeViewModel = koinViewModel()
 ) {
-    val state = viewModel.visitsFlow.collectAsState(initial = Data.idle())
+    val state = viewModel.visitsFlow.collectAsStateWithLifecycle()
 
     LocalAppBarTitle.current(stringResource(R.string.patient_visits))
 
