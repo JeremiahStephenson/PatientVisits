@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Assessment</string>
+
+    <string name="patient_visits">Patient Visits</string>
+    <string name="feedback">Feedback</string>
+    <string name="error_message">There was an error. Please try again.</string>
+    <string name="retry">Retry</string>
+    <string name="evaluate_visit">Give Feedback</string>
+
+    <string name="name">Name</string>
+    <string name="doctor">Doctor</string>
+    <string name="date_of_visit">Date of visit</string>
+    <string name="type_of_visit">Type of visit</string>
+    <string name="diagnosis">Diagnosis</string>
+</resources>
