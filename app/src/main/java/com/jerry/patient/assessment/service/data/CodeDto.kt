@@ -4,4 +4,6 @@ import com.squareup.moshi.JsonClass
 import java.io.Serializable
 
 @JsonClass(generateAdapter = true)
-data class CodeDto(val coding: List<CodingDto>) : Serializable
+data class CodeDto(val coding: List<CodingDto>) : Serializable {
+    val diagnosis get() = coding.joinToString(", ") { it.name }
+}

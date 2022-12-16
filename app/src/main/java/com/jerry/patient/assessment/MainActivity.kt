@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +22,7 @@ import com.jerry.patient.assessment.core.LocalAppBarTitle
 import com.jerry.patient.assessment.core.unboundClickable
 import com.jerry.patient.assessment.ui.theme.AssessmentTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +31,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             AssessmentTheme {
-                Content()
+                Content { onBackPressedDispatcher.onBackPressed() }
             }
         }
     }
@@ -39,8 +43,10 @@ class MainActivity : ComponentActivity() {
     ExperimentalMaterialNavigationApi::class
 )
 @Composable
-fun Content() {
-    val engine = rememberAnimatedNavHostEngine()
+fun Content(onBackPressed: () -> Unit) {
+    val engine = rememberAnimatedNavHostEngine(
+        rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING
+    )
     val navController = engine.rememberNavController()
     var title by remember { mutableStateOf<String?>(null) }
     CompositionLocalProvider(
@@ -54,7 +60,7 @@ fun Content() {
                 }
                 Toolbar(
                     showBackArrow = { showBackArrow },
-                    onBack = { navController.popBackStack() },
+                    onBack = onBackPressed,
                     getTitle = { title.orEmpty() }
                 )
             }) { innerPadding ->
@@ -70,8 +76,7 @@ fun Content() {
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalLifecycleComposeApi::class
+    ExperimentalMaterial3Api::class
 )
 @Composable
 fun Toolbar(
@@ -91,10 +96,11 @@ fun Toolbar(
             ) {
                 Icon(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(8.dp)
                         .unboundClickable {
                             onBack()
-                        },
+                        }
+                        .padding(8.dp),
                     painter = painterResource(R.drawable.ic_baseline_arrow_back_24),
                     contentDescription = stringResource(R.string.back)
                 )

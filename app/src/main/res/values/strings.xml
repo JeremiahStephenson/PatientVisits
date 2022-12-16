@@ -7,10 +7,22 @@
     <string name="retry">Retry</string>
     <string name="evaluate_visit">Give Feedback</string>
 
+    <string name="thank_you">Thank You.</string>
+    <string name="submit">Submit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="name">Name</string>
     <string name="doctor">Doctor</string>
     <string name="date_of_visit">Date of visit</string>
     <string name="type_of_visit">Type of visit</string>
     <string name="diagnosis">Diagnosis</string>
     <string name="back">Back</string>
+    <string name="are_you_sure">Are you sure you want to exit before submitting feedback?</string>
+
+    <string name="form_question_1_1">Hi %1$s, on a scale of 1–10, would you recommend Dr %2$s to a friend or family member?</string>
+    <string name="form_question_1_2">1 = Would not recommend</string>
+    <string name="form_question_1_3">10 = Would strongly recommend</string>
+
+    <string name="form_question_2_1">You were diagnosed with %1$s.</string>
+    <string name="form_question_2_2">Did Dr %1$s explain how to manage this diagnosis in a way you could understand?</string>
 </resources>

@@ -12,4 +12,7 @@ data class VisitsDto(
     val entry: List<ResourceDto>
 ) : Serializable {
     val entries: List<Resource> get() = entry.map { it.resource }
+    val patient get() = entry.firstOrNull { it.resource is PatientDto }?.resource as PatientDto
+    val doctor get() = entry.firstOrNull { it.resource is DoctorDto }?.resource as DoctorDto
+    val diagnosis get() = entry.firstOrNull { it.resource is DiagnosisDto }?.resource as DiagnosisDto
 }
