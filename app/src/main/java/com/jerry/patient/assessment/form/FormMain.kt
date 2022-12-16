@@ -4,7 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
@@ -64,11 +66,15 @@ fun FormMain(
             userScrollEnabled = false
         ) { page ->
             when (page) {
-                0 -> Rating(visitInfo) {
+                0 -> Rating(visitInfo, rememberCurrentPage(pagerState, page)) {
                     forwardEnabled = it
                 }
-                1 -> Understanding(visitInfo)
-                2 -> Feelings()
+                1 -> Understanding(visitInfo, rememberCurrentPage(pagerState, page)) {
+                    forwardEnabled = it
+                }
+                2 -> Feelings(rememberCurrentPage(pagerState, page)) {
+                    forwardEnabled = it
+                }
                 3 -> Summary()
             }
         }
@@ -102,6 +108,7 @@ fun FormMain(
 @Composable
 fun Rating(
     visitInfo: VisitsDto,
+    isCurrentPage: Boolean,
     onEnableOrDisableContinue: (Boolean) -> Unit
 ) {
     Column(
@@ -132,6 +139,10 @@ fun Rating(
             text = stringResource(R.string.form_question_1_3)
         )
         var rating by rememberSaveable { mutableStateOf(0) }
+        LaunchedEffect(isCurrentPage) {
+            onEnableOrDisableContinue(rating > 0)
+        }
+
         RatingBar(
             rating = rating,
             modifier = Modifier
@@ -145,7 +156,11 @@ fun Rating(
 }
 
 @Composable
-fun Understanding(visitInfo: VisitsDto) {
+fun Understanding(
+    visitInfo: VisitsDto,
+    isCurrentPage: Boolean,
+    onEnableOrDisableContinue: (Boolean) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -155,7 +170,8 @@ fun Understanding(visitInfo: VisitsDto) {
     ) {
         Text(
             style = MaterialTheme.typography.titleLarge,
-            text = stringResource(R.string.thank_you))
+            text = stringResource(R.string.thank_you)
+        )
         Text(
             modifier = Modifier.padding(top = 8.dp),
             style = MaterialTheme.typography.titleLarge,
@@ -174,34 +190,25 @@ fun Understanding(visitInfo: VisitsDto) {
                 visitInfo.doctor.name.givenName
             )
         )
-        Row(modifier = Modifier.padding(24.dp)
-        ) {
-            Icon(
-                modifier = Modifier
-                    .unboundClickable {  }
-                    .padding(16.dp),
-                imageVector = Icons.Default.ThumbUp,
-                contentDescription = null,
-                tint = Color.Green
-            )
-            Spacer(modifier = Modifier.width(50.dp))
-            Icon(
-                modifier = Modifier
-                    .rotate(180F)
-                    .unboundClickable {  }
-                    .padding(16.dp),
-                imageVector = Icons.Default.ThumbUp,
-                contentDescription = null,
-                tint = Color.Red
-            )
+        var positive by rememberSaveable { mutableStateOf<Boolean?>(null) }
+        LaunchedEffect(isCurrentPage) {
+            onEnableOrDisableContinue(positive != null)
         }
-
+        LikeButtons(positive = positive) {
+            positive = it
+            onEnableOrDisableContinue(true)
+        }
     }
 }
 
 @Composable
-fun Feelings() {
-
+fun Feelings(
+    isCurrentPage: Boolean,
+    onEnableOrDisableContinue: (Boolean) -> Unit
+) {
+    LaunchedEffect(isCurrentPage) {
+        onEnableOrDisableContinue(false)
+    }
 }
 
 @Composable
@@ -300,6 +307,56 @@ private fun ProgressIndicator(
 }
 
 @Composable
+private fun LikeButtons(
+    positive: Boolean?,
+    onSelected: (Boolean) -> Unit
+) {
+    Row(modifier = Modifier.padding(24.dp)) {
+        LikeButton(
+            selected = positive == true,
+            tint = Color.Green
+        ) {
+            onSelected(true)
+        }
+        Spacer(modifier = Modifier.width(50.dp))
+        LikeButton(
+            selected = positive == false,
+            tint = Color.Red,
+            up = false
+        ) {
+            onSelected(false)
+        }
+    }
+}
+
+@Composable
+private fun LikeButton(
+    selected: Boolean,
+    tint: Color,
+    up: Boolean = true,
+    onSelected: () -> Unit
+) {
+    Icon(
+        modifier = Modifier
+            .rotate(if (up) 0F else 180F)
+            .clip(CircleShape)
+            .clickable {
+                onSelected()
+            }
+            .run {
+                when (selected) {
+                    true -> background(tint.copy(alpha = 0.3F))
+                    else -> this
+                }
+            }
+            .padding(16.dp),
+        imageVector = Icons.Default.ThumbUp,
+        contentDescription = null,
+        tint = tint
+    )
+}
+
+@Composable
 private fun AreYouSureDialog(
     dismiss: () -> Unit,
     goBack: () -> Unit
@@ -357,4 +414,13 @@ private fun CoroutineScope.moveBackward(
             pagerState.animateScrollToPage(pagerState.currentPage - 1)
         }
     }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun rememberCurrentPage(
+    pagerState: PagerState,
+    page: Int
+): Boolean {
+    return remember { derivedStateOf { pagerState.currentPage == page && pagerState.currentPageOffset == 0F } }.value
 }
