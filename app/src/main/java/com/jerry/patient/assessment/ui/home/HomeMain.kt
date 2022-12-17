@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.home
+package com.jerry.patient.assessment.ui.home
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
@@ -25,8 +23,10 @@ import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.cache.Feedback
 import com.jerry.patient.assessment.compose.LocalAppBarTitle
 import com.jerry.patient.assessment.compose.MediumButton
-import com.jerry.patient.assessment.destinations.FormMainDestination
+import com.jerry.patient.assessment.service.VisitsData
 import com.jerry.patient.assessment.service.data.*
+import com.jerry.patient.assessment.ui.common.ErrorIndicator
+import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.util.READABLE_TIME_PATTERN_PARSER
 import com.jerry.patient.assessment.util.READBLE_DATE_TIME_PATTERN_PARSER
 import com.ramcosta.composedestinations.annotation.Destination
@@ -57,48 +57,9 @@ fun HomeMain(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            items(
-                items = state.value.data?.visits?.entries ?: emptyList(),
-                key = { it.id }
-            ) { item ->
-                when (item) {
-                    is PatientDto -> PatientInfo(item)
-                    is DoctorDto -> DoctorInfo(item)
-                    is DiagnosisDto -> DiagnosisInfo(item)
-                    is AppointmentDto -> AppointmentInfo(item)
-                }
-            }
-            state.value.data?.feedback?.let {
-                item {
-                    FeedbackInfo(feedback = it)
-                }
-            }
-            state.value.data?.let {
-                item {
-                    MediumButton(
-                        text = stringResource(
-                            when (state.value.data?.feedback) {
-                                null -> R.string.evaluate_visit
-                                else -> R.string.edit_feedback
-                            }
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 24.dp),
-                        onClick = {
-                            navController.navigate(
-                                FormMainDestination(visitInfo = it)
-                            )
-                        })
-                }
-            }
+        PatientInfoList(visitsData = state.value.data) {
+            navController.navigate(FormMainDestination(visitInfo = it))
         }
-
         AnimatedContent(
             targetState = state.value,
         ) { state ->
@@ -107,6 +68,51 @@ fun HomeMain(
                 state.isError -> ErrorIndicator {
                     viewModel.retry()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PatientInfoList(
+    visitsData: VisitsData?,
+    onGiveFeedback: (VisitsData) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        items(
+            items = visitsData?.visits?.entries ?: emptyList(),
+            key = { it.id }
+        ) { item ->
+            when (item) {
+                is PatientDto -> PatientInfo(item)
+                is DoctorDto -> DoctorInfo(item)
+                is DiagnosisDto -> DiagnosisInfo(item)
+                is AppointmentDto -> AppointmentInfo(item)
+            }
+        }
+        visitsData?.feedback?.let {
+            item {
+                FeedbackInfo(feedback = it)
+            }
+        }
+        visitsData?.let {
+            item {
+                MediumButton(
+                    text = stringResource(
+                        when (visitsData.feedback) {
+                            null -> R.string.evaluate_visit
+                            else -> R.string.edit_feedback
+                        }
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    onClick = { onGiveFeedback(it) }
+                )
             }
         }
     }
@@ -182,24 +188,6 @@ private fun FeedbackInfo(feedback: Feedback) {
 }
 
 @Composable
-private fun ErrorIndicator(onRetry: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_baseline_error_outline_24),
-            contentDescription = null
-        )
-        Text(text = stringResource(R.string.error_message))
-        MediumButton(
-            text = stringResource(R.string.retry),
-            onClick = onRetry
-        )
-    }
-}
-
-@Composable
 private fun buildLargeTitleAnnotatedString(
     title: String,
     content: AnnotatedString.Builder.() -> Unit
@@ -215,4 +203,4 @@ private val List<NameDto>.readableName
         it.given.joinToString(" ", postfix = " ${it.family}") { name -> name }
     }
 
-private const val PATIENT_INFO_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"
+const val PATIENT_INFO_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"

@@ -1,13 +1,13 @@
-package com.jerry.patient.assessment.form
+package com.jerry.patient.assessment.ui.form
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jerry.patient.assessment.util.SavedHandle
 import com.jerry.patient.assessment.cache.Feedback
-import com.jerry.patient.assessment.util.CoroutineContextProvider
-import com.jerry.patient.assessment.destinations.FormMainDestination
 import com.jerry.patient.assessment.repository.PatientRepository
+import com.jerry.patient.assessment.ui.destinations.FormMainDestination
+import com.jerry.patient.assessment.util.CoroutineContextProvider
+import com.jerry.patient.assessment.util.SavedHandle
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

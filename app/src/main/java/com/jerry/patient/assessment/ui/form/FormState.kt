@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.form
+package com.jerry.patient.assessment.ui.form
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State

@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.compose.theme
+package com.jerry.patient.assessment.ui.common.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

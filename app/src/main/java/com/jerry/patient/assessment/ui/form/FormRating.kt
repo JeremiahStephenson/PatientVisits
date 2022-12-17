@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.form
+package com.jerry.patient.assessment.ui.form
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

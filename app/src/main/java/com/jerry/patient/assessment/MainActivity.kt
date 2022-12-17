@@ -19,7 +19,9 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.jerry.patient.assessment.compose.LocalAppBarTitle
 import com.jerry.patient.assessment.extensions.unboundClickable
-import com.jerry.patient.assessment.compose.theme.AssessmentTheme
+import com.jerry.patient.assessment.ui.NavGraphs
+import com.jerry.patient.assessment.ui.appCurrentDestinationAsState
+import com.jerry.patient.assessment.ui.common.theme.AssessmentTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
 import com.ramcosta.composedestinations.animations.rememberAnimatedNavHostEngine
@@ -39,14 +41,17 @@ class MainActivity : ComponentActivity() {
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalAnimationApi::class,
-    ExperimentalMaterialNavigationApi::class
+    ExperimentalMaterialNavigationApi::class,
 )
 @Composable
-fun Content(onBackPressed: () -> Unit) {
+fun Content(
+    onBackPressed: () -> Unit
+) {
     val engine = rememberAnimatedNavHostEngine(
         rootDefaultAnimations = RootNavGraphDefaultAnimations.ACCOMPANIST_FADING
     )
     val navController = engine.rememberNavController()
+
     var title by remember { mutableStateOf<String?>(null) }
     CompositionLocalProvider(
         LocalAppBarTitle provides { title = it },

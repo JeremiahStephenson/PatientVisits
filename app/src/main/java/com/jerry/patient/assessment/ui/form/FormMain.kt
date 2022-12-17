@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.form
+package com.jerry.patient.assessment.ui.form
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes

@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.form
+package com.jerry.patient.assessment.ui.form
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.cache.Feedback
-import com.jerry.patient.assessment.compose.theme.Pink500
+import com.jerry.patient.assessment.ui.common.theme.Pink500
 
 @Composable
 fun Summary(

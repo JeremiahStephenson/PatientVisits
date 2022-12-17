@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.home
+package com.jerry.patient.assessment.ui.home
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
