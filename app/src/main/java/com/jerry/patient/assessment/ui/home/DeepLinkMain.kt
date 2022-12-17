@@ -22,6 +22,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * This probably could be merged with `FormMain.kt`
+ * but I like having it separate to keep the logic cleaner
+ */
 @OptIn(
     ExperimentalLifecycleComposeApi::class,
     ExperimentalAnimationApi::class
@@ -35,16 +39,16 @@ import org.koin.androidx.compose.koinViewModel
 )
 @Composable
 fun DeepLinkMain(
-    id: String? = null,
+    id: String,
     navController: DestinationsNavigator,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val state = viewModel.visitsFlow.collectAsStateWithLifecycle()
 
-    LocalAppBarTitle.current(stringResource(R.string.patient_visits))
+    LocalAppBarTitle.current(stringResource(R.string.loading))
 
     LaunchedEffect(Unit) {
-        viewModel.loadVisitsInfo(PATIENT_INFO_ID)
+        viewModel.loadVisitsInfo(id)
     }
 
     LaunchedEffect(state.value.data) {

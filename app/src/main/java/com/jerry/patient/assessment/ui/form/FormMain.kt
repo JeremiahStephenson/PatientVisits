@@ -62,9 +62,7 @@ fun FormMain(
         modifier = Modifier.fillMaxSize()
     ) {
         val pagerState = rememberPagerState()
-        var forwardEnabled by rememberSaveable {
-            mutableStateOf(false)
-        }
+        var forwardEnabled by rememberSaveable { mutableStateOf(false) }
         HorizontalPager(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,29 +77,25 @@ fun FormMain(
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onRated = { viewModel.saveRating(it) },
                     getRating = { state.feedBack.rating },
-                    onEnableOrDisableContinue = {
-                        forwardEnabled = it
-                    }
+                    onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 1 -> Understanding(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onUnderstanding = { viewModel.saveUnderstanding(it) },
                     getUnderstanding = { state.feedBack.understanding },
-                    onEnableOrDisableContinue = {
-                        forwardEnabled = it
-                    }
+                    onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 2 -> Feedback(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onFeedback = { viewModel.saveFeedback(it) },
                     getFeedback = { state.feedBack.feedback },
-                    onEnableOrDisableContinue = {
-                        forwardEnabled = it
-                    }
+                    onEnableOrDisableContinue = { forwardEnabled = it }
                 )
-                3 -> Summary(state.feedBack)
+                3 -> Summary(state.feedBack) {
+                    viewModel.saveImage(it)
+                }
             }
         }
         val scope = rememberCoroutineScope()

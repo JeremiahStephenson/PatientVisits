@@ -13,7 +13,8 @@ data class Feedback(
     var visitId: String = "",
     var rating: Int = 0,
     var understanding: Boolean? = null,
-    var feedback: String? = null
+    var feedback: String? = null,
+    var image: String? = null
 ) : Serializable {
 
     @PrimaryKey(autoGenerate = true)

@@ -203,4 +203,4 @@ private val List<NameDto>.readableName
         it.given.joinToString(" ", postfix = " ${it.family}") { name -> name }
     }
 
-const val PATIENT_INFO_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"
+private const val PATIENT_INFO_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"

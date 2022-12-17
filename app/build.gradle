@@ -95,6 +95,8 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room"
     ksp "androidx.room:room-compiler:$room"
 
+    implementation "io.coil-kt:coil-compose:$coil"
+
     implementation "com.jakewharton.timber:timber:$timber"
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$desugarJdkLib"

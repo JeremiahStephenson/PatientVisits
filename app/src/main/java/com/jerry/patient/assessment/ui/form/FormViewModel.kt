@@ -1,5 +1,6 @@
 package com.jerry.patient.assessment.ui.form
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -45,6 +46,11 @@ class FormViewModel(
 
     fun saveFeedback(feedback: String?) {
         this.feedback = this.feedback?.copy(feedback = feedback)
+        checkIfChanged()
+    }
+
+    fun saveImage(uri: Uri?) {
+        this.feedback = this.feedback?.copy(image = uri?.toString())
         checkIfChanged()
     }
 
