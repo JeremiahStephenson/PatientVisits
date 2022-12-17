@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(
     ExperimentalMaterialNavigationApi::class,
+    ExperimentalLayoutApi::class,
 )
 @Composable
 fun Content(
@@ -55,7 +53,7 @@ fun Content(
         LocalAppBarTitle provides { title = it },
     ) {
         Scaffold(
-            contentWindowInsets = WindowInsets.navigationBars,
+            modifier = Modifier.imePadding(),
             topBar = {
                 val showBackArrow by remember(navController.appCurrentDestinationAsState().value) {
                     derivedStateOf { navController.previousBackStackEntry != null }
@@ -65,9 +63,13 @@ fun Content(
                     onBack = onBackPressed,
                     getTitle = { title.orEmpty() }
                 )
-            }) { innerPadding ->
+            },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+        ) { innerPadding ->
             DestinationsNavHost(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(innerPadding)
+                    .consumeWindowInsets(innerPadding)
+                    .systemBarsPadding(),
                 engine = engine,
                 navGraph = NavGraphs.root,
                 navController = navController,

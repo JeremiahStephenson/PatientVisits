@@ -61,9 +61,7 @@ fun FormMain(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .imePadding()
+        modifier = Modifier.fillMaxSize()
     ) {
         val pagerState = rememberPagerState()
         // We don't want the forward button to be enabled until the user
@@ -217,7 +215,7 @@ private fun ProgressIndicator(
 ) {
     val progress by animateFloatAsState(targetValue = (page + 1) / count.toFloat())
     LinearProgressIndicator(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().height(6.dp),
         progress = progress
     )
 }
