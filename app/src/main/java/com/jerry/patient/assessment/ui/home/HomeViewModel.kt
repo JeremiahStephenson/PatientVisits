@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModel(
-    private val handle: SavedStateHandle,
     private val patientRepository: PatientRepository,
 ) : ViewModel() {
 

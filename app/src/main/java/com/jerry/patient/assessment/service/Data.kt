@@ -5,6 +5,7 @@ data class Data<out DataType>(
     val data: DataType? = null,
     val throwable: Throwable? = null) {
 
+    val isIdle get() = status == Status.IDLE
     val isSuccessful get() = status == Status.DONE
     val isLoading get() = status == Status.LOADING
     val isError get() = status == Status.ERROR

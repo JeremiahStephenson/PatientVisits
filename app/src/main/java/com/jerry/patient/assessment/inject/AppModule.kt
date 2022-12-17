@@ -13,6 +13,6 @@ val appModule = module {
 
     single<CoroutineContextProvider> { CoroutineContextProvider.MainCoroutineContext }
 
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
     viewModel { FormViewModel(get(), get(), get()) }
 }

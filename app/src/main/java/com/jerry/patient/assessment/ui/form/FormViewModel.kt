@@ -12,6 +12,7 @@ import com.jerry.patient.assessment.util.SavedHandle
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 
 class FormViewModel(
     private val handle: SavedStateHandle,
@@ -73,6 +74,7 @@ class FormViewModel(
     }
 
     companion object {
-        private const val ARG_FEEDBACK = "ARG_FEEDBACK"
+        @VisibleForTesting
+        const val ARG_FEEDBACK = "ARG_FEEDBACK"
     }
 }
