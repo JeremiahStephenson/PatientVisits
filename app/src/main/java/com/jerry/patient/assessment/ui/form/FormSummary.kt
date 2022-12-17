@@ -174,7 +174,7 @@ private fun Rating(rating: Int) {
             modifier = Modifier.padding(start = 12.dp),
             imageVector = Icons.Default.Favorite,
             tint = Pink500,
-            contentDescription = stringResource(R.string.rating_accessibility, rating)
+            contentDescription = stringResource(R.string.form_rating_accessibility, rating)
         )
         Text(
             modifier = Modifier

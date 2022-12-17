@@ -61,7 +61,9 @@ fun FormMain(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding()
     ) {
         val pagerState = rememberPagerState()
         // We don't want the forward button to be enabled until the user
