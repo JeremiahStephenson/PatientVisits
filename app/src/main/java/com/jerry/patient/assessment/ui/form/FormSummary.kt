@@ -37,7 +37,7 @@ import com.jerry.patient.assessment.ui.common.theme.Pink500
 
 @Composable
 fun Summary(
-    results: Feedback,
+    results: Feedback?,
     onImageSelected: (Uri?) -> Unit
 ) {
     val scrollState = rememberScrollState()
@@ -54,10 +54,10 @@ fun Summary(
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
         )
-        Rating(results.rating)
-        Understanding(results.understanding)
-        FeedbackText(results.feedback.orEmpty())
-        UserImage(results.image, onImageSelected)
+        Rating(results?.rating ?: 0)
+        Understanding(results?.understanding)
+        FeedbackText(results?.feedback.orEmpty())
+        UserImage(results?.image, onImageSelected)
     }
 }
 

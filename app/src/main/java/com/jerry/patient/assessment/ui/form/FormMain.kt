@@ -81,21 +81,21 @@ fun FormMain(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onRated = { viewModel.saveRating(it) },
-                    getRating = { uiState.feedBack.rating },
+                    getRating = { uiState.feedBack?.rating ?: 0 },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 1 -> Understanding(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onUnderstanding = { viewModel.saveUnderstanding(it) },
-                    getUnderstanding = { uiState.feedBack.understanding },
+                    getUnderstanding = { uiState.feedBack?.understanding },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 2 -> Feedback(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onFeedback = { viewModel.saveFeedback(it) },
-                    getFeedback = { uiState.feedBack.feedback },
+                    getFeedback = { uiState.feedBack?.feedback },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 3 -> Summary(uiState.feedBack) { viewModel.saveImage(it) }
@@ -136,9 +136,12 @@ private fun ButtonRow(
     onBackward: () -> Unit,
     onSubmit: () -> Unit
 ) {
+    Divider(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2F)
+    )
     Row(
         modifier = Modifier
-            .padding(vertical = 16.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -215,7 +218,9 @@ private fun ProgressIndicator(
 ) {
     val progress by animateFloatAsState(targetValue = (page + 1) / count.toFloat())
     LinearProgressIndicator(
-        modifier = Modifier.fillMaxWidth().height(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(6.dp),
         progress = progress
     )
 }
@@ -240,11 +245,12 @@ private fun AreYouSureDialog(
                 text = stringResource(R.string.are_you_sure),
                 textAlign = TextAlign.Center
             )
-            MediumButton(
+            OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.yes),
                 onClick = goBack
-            )
+            ) {
+                Text(text = stringResource(R.string.yes))
+            }
             MediumButton(
                 modifier = Modifier
                     .fillMaxWidth()

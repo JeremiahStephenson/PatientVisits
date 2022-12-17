@@ -16,9 +16,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.ui.common.RatingBar
 import com.jerry.patient.assessment.extensions.givenName
 import com.jerry.patient.assessment.service.data.VisitsDto
+import com.jerry.patient.assessment.ui.common.RatingBar
 
 @Composable
 fun Rating(

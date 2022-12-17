@@ -28,7 +28,7 @@ class FormViewModel(
         MutableSharedFlow<Unit>(0, 1, BufferOverflow.DROP_OLDEST)
     val feedbackSaved = _feedBackSaved.asSharedFlow()
 
-    val feedbackFlow = handle.getStateFlow(ARG_FEEDBACK, originalFeedback)
+    val feedbackFlow = handle.getStateFlow<Feedback?>(ARG_FEEDBACK, null)
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000L),
@@ -39,6 +39,10 @@ class FormViewModel(
 
     private val _feedbackHasChanged = MutableStateFlow(false)
     val feedbackHasChanged = _feedbackHasChanged.asStateFlow()
+
+    init {
+        checkIfChanged()
+    }
 
     fun saveRating(rating: Int) {
         feedback = feedback?.copy(rating = rating)

@@ -1,5 +1,6 @@
 package com.jerry.patient.assessment
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,7 +55,12 @@ fun Content(
         LocalAppBarTitle provides { title = it },
     ) {
         Scaffold(
-            modifier = Modifier.imePadding(),
+            modifier = Modifier.run {
+                when (LocalConfiguration.current.orientation) {
+                    Configuration.ORIENTATION_LANDSCAPE -> this
+                    else -> imePadding()
+                }
+            },
             topBar = {
                 val showBackArrow by remember(navController.appCurrentDestinationAsState().value) {
                     derivedStateOf { navController.previousBackStackEntry != null }
@@ -67,7 +74,8 @@ fun Content(
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
             DestinationsNavHost(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
                     .consumeWindowInsets(innerPadding)
                     .systemBarsPadding(),
                 engine = engine,
