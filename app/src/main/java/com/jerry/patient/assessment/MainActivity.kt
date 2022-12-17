@@ -17,10 +17,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
-import com.jerry.patient.assessment.compose.LocalAppBarTitle
 import com.jerry.patient.assessment.extensions.unboundClickable
 import com.jerry.patient.assessment.ui.NavGraphs
 import com.jerry.patient.assessment.ui.appCurrentDestinationAsState
+import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
 import com.jerry.patient.assessment.ui.common.theme.AssessmentTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.animations.defaults.RootNavGraphDefaultAnimations
@@ -39,8 +39,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalAnimationApi::class,
     ExperimentalMaterialNavigationApi::class,
 )
 @Composable
@@ -79,9 +77,6 @@ fun Content(
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class
-)
 @Composable
 fun Toolbar(
     showBackArrow: () -> Boolean,

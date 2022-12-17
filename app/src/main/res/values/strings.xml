@@ -27,6 +27,7 @@
     <string name="patient_feedback">Patient Feedback</string>
     <string name="load_image">Upload an image</string>
     <string name="change_image">Change image</string>
+    <string name="feedback_saved">Feedback saved!</string>
 
     <string name="form_question_1_1">Hi %1$s, on a scale of 1–10, would you recommend Dr %2$s to a friend or family member?</string>
     <string name="form_question_1_2">1 = Would not recommend</string>

@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.compose.LocalAppBarTitle
+import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
 import com.jerry.patient.assessment.ui.common.ErrorIndicator
 import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.ui.destinations.HomeMainDestination
@@ -26,10 +26,6 @@ import org.koin.androidx.compose.koinViewModel
  * This probably could be merged with `FormMain.kt`
  * but I like having it separate to keep the logic cleaner
  */
-@OptIn(
-    ExperimentalLifecycleComposeApi::class,
-    ExperimentalAnimationApi::class
-)
 @Destination(
     deepLinks = [
         DeepLink(
@@ -70,9 +66,7 @@ fun DeepLinkMain(
         ) { state ->
             when {
                 state.isLoading -> CircularProgressIndicator()
-                state.isError -> ErrorIndicator {
-                    viewModel.retry()
-                }
+                state.isError -> ErrorIndicator { viewModel.retry() }
             }
         }
     }

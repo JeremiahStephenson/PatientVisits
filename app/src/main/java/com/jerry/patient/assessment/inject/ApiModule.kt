@@ -22,6 +22,7 @@ val apiModule = module {
     single { MoshiConverterFactory.create(get()).asLenient() }
 
     single {
+        // The json from a remote file in order to simulate a server response
         Retrofit.Builder()
             .addConverterFactory(get<MoshiConverterFactory>())
             .baseUrl("https://raw.githubusercontent.com/JeremiahStephenson/Files/master/")

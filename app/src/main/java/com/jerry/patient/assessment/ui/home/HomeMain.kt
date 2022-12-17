@@ -1,7 +1,6 @@
 package com.jerry.patient.assessment.ui.home
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,15 +16,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.cache.Feedback
-import com.jerry.patient.assessment.compose.LocalAppBarTitle
-import com.jerry.patient.assessment.compose.MediumButton
 import com.jerry.patient.assessment.service.VisitsData
 import com.jerry.patient.assessment.service.data.*
 import com.jerry.patient.assessment.ui.common.ErrorIndicator
+import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
+import com.jerry.patient.assessment.ui.common.MediumButton
 import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.util.READABLE_TIME_PATTERN_PARSER
 import com.jerry.patient.assessment.util.READBLE_DATE_TIME_PATTERN_PARSER
@@ -34,10 +32,6 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(
-    ExperimentalAnimationApi::class,
-    ExperimentalLifecycleComposeApi::class
-)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -50,7 +44,7 @@ fun HomeMain(
     LocalAppBarTitle.current(stringResource(R.string.patient_visits))
 
     LaunchedEffect(Unit) {
-        viewModel.loadVisitsInfo(PATIENT_INFO_ID)
+        viewModel.loadVisitsInfo(PATIENT_VISIT_ID)
     }
 
     Box(
@@ -65,9 +59,7 @@ fun HomeMain(
         ) { state ->
             when {
                 state.isLoading -> CircularProgressIndicator()
-                state.isError -> ErrorIndicator {
-                    viewModel.retry()
-                }
+                state.isError -> ErrorIndicator { viewModel.retry() }
             }
         }
     }
@@ -203,4 +195,6 @@ private val List<NameDto>.readableName
         it.given.joinToString(" ", postfix = " ${it.family}") { name -> name }
     }
 
-private const val PATIENT_INFO_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"
+// In a real app we would have the patient sign in
+// and then we would have this id but this is a just demo
+private const val PATIENT_VISIT_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"

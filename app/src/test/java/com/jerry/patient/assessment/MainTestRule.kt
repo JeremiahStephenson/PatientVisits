@@ -5,14 +5,12 @@ import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.arch.core.executor.TaskExecutor
 import com.jerry.patient.assessment.util.CoroutineContextProvider
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class MainTestRule : TestWatcher() {
 
     val dispatcher = UnconfinedTestDispatcher()

@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.compose.MediumButton
 
 @Composable
 fun ErrorIndicator(onRetry: () -> Unit) {

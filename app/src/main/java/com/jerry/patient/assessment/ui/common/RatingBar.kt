@@ -1,4 +1,4 @@
-package com.jerry.patient.assessment.compose
+package com.jerry.patient.assessment.ui.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding

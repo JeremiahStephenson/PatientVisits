@@ -3,6 +3,7 @@ package com.jerry.patient.assessment.service.adapters
 import com.jerry.patient.assessment.service.data.*
 import com.squareup.moshi.*
 
+// Dynamically go through the response and parse them into strongly typed objects
 class ResourceAdapter {
     // Even though we don't need to serialize this data we
     // have to have this here or else it won't deserialize

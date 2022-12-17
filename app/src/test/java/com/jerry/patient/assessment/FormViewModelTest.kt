@@ -9,7 +9,6 @@ import com.jerry.patient.assessment.service.VisitsData
 import com.jerry.patient.assessment.ui.form.FormViewModel
 import io.mockk.coJustRun
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -17,7 +16,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class FormViewModelTest {
 
     private val handle = SavedStateHandle()

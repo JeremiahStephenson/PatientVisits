@@ -8,7 +8,6 @@ import com.jerry.patient.assessment.ui.home.HomeViewModel
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -17,7 +16,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDateTime
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
     private val patientRepository = mockk<PatientRepository>()

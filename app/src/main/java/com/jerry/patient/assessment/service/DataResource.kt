@@ -1,6 +1,6 @@
 package com.jerry.patient.assessment.service
 
-data class Data<out DataType>(
+data class DataResource<out DataType>(
     val status: Status,
     val data: DataType? = null,
     val throwable: Throwable? = null) {
@@ -12,13 +12,13 @@ data class Data<out DataType>(
 
     companion object {
 
-        fun <DataType> idle() = Data<DataType>(Status.IDLE)
+        fun <DataType> idle() = DataResource<DataType>(Status.IDLE)
 
-        fun <DataType> done(data: DataType) = Data(Status.DONE, data)
+        fun <DataType> done(data: DataType) = DataResource(Status.DONE, data)
 
-        fun <DataType> loading(data: DataType? = null) = Data(Status.LOADING, data)
+        fun <DataType> loading(data: DataType? = null) = DataResource(Status.LOADING, data)
 
         fun <DataType> error(throwable: Throwable?, data: DataType? = null) =
-            Data(Status.ERROR, data, throwable)
+            DataResource(Status.ERROR, data, throwable)
     }
 }

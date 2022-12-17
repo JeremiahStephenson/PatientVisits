@@ -6,7 +6,7 @@ import com.jerry.patient.assessment.cache.Feedback
 import androidx.compose.runtime.*
 
 @Stable
-class FormState(
+class FormUiState(
     feedBackChangedState: State<Boolean>,
     feedBackState: State<Feedback>
 ) {

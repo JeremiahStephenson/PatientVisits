@@ -1,8 +1,9 @@
 package com.jerry.patient.assessment.ui.form
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,21 +12,22 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.compose.*
 import com.jerry.patient.assessment.extensions.unboundClickable
 import com.jerry.patient.assessment.service.VisitsData
+import com.jerry.patient.assessment.ui.common.FadeAnimatedVisibility
+import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
+import com.jerry.patient.assessment.ui.common.MediumButton
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -33,9 +35,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(
-    ExperimentalPagerApi::class,
-)
 @Destination
 @Composable
 fun FormMain(
@@ -45,15 +44,18 @@ fun FormMain(
 ) {
     LocalAppBarTitle.current(stringResource(R.string.feedback))
 
-    val state = getFormState(viewModel)
+    val uiState = getFormUiState(viewModel)
 
     var showDialog by remember { mutableStateOf(false) }
-    BackHandler(state.feedBackChanged) {
+    BackHandler(uiState.feedBackChanged) {
         showDialog = true
     }
 
+    val context = LocalContext.current
+    val feedbackSuccessText = stringResource(R.string.feedback_saved)
     LaunchedEffect(Unit) {
         viewModel.feedbackSaved.collectLatest {
+            Toast.makeText(context, feedbackSuccessText, Toast.LENGTH_SHORT).show()
             navController.popBackStack()
         }
     }
@@ -62,6 +64,9 @@ fun FormMain(
         modifier = Modifier.fillMaxSize()
     ) {
         val pagerState = rememberPagerState()
+        // We don't want the forward button to be enabled until the user
+        // has answered the question.
+        // This allows the sub composables to control that.
         var forwardEnabled by rememberSaveable { mutableStateOf(false) }
         HorizontalPager(
             modifier = Modifier
@@ -76,26 +81,24 @@ fun FormMain(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onRated = { viewModel.saveRating(it) },
-                    getRating = { state.feedBack.rating },
+                    getRating = { uiState.feedBack.rating },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 1 -> Understanding(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onUnderstanding = { viewModel.saveUnderstanding(it) },
-                    getUnderstanding = { state.feedBack.understanding },
+                    getUnderstanding = { uiState.feedBack.understanding },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 2 -> Feedback(
                     visitInfo = visitInfo.visits,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
                     onFeedback = { viewModel.saveFeedback(it) },
-                    getFeedback = { state.feedBack.feedback },
+                    getFeedback = { uiState.feedBack.feedback },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
-                3 -> Summary(state.feedBack) {
-                    viewModel.saveImage(it)
-                }
+                3 -> Summary(uiState.feedBack) { viewModel.saveImage(it) }
             }
         }
         val scope = rememberCoroutineScope()
@@ -125,7 +128,6 @@ fun FormMain(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun ButtonRow(
     pagerState: PagerState,
@@ -254,7 +256,6 @@ private fun AreYouSureDialog(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 private fun CoroutineScope.moveForward(
     pagerState: PagerState,
 ) {
@@ -265,7 +266,6 @@ private fun CoroutineScope.moveForward(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 private fun CoroutineScope.moveBackward(
     pagerState: PagerState
 ) {
@@ -276,7 +276,6 @@ private fun CoroutineScope.moveBackward(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun rememberCurrentPage(
     pagerState: PagerState,
@@ -285,11 +284,10 @@ private fun rememberCurrentPage(
     return remember { derivedStateOf { pagerState.currentPage == page && pagerState.currentPageOffset == 0F } }.value
 }
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
-private fun getFormState(viewModel: FormViewModel): FormState {
+private fun getFormUiState(viewModel: FormViewModel): FormUiState {
     val feedBackChangedState = viewModel.feedbackHasChanged.collectAsStateWithLifecycle()
     val feedBackState = viewModel.feedbackFlow.collectAsStateWithLifecycle()
-    return FormState(feedBackChangedState, feedBackState)
+    return FormUiState(feedBackChangedState, feedBackState)
 }
 

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.extensions.givenName
 import com.jerry.patient.assessment.service.data.VisitsDto
+import com.jerry.patient.assessment.ui.common.LikeButton
 
 @Composable
 fun Understanding(

@@ -23,12 +23,17 @@ class FormViewModel(
     private val originalFeedback =
         FormMainDestination.argsFrom(handle).visitInfo.feedback ?: Feedback()
 
+    // Let's the UI know that the data has been saved
     private val _feedBackSaved =
         MutableSharedFlow<Unit>(0, 1, BufferOverflow.DROP_OLDEST)
     val feedbackSaved = _feedBackSaved.asSharedFlow()
 
     val feedbackFlow = handle.getStateFlow(ARG_FEEDBACK, originalFeedback)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), originalFeedback)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            originalFeedback
+        )
 
     private var feedback by SavedHandle<Feedback?>(handle, ARG_FEEDBACK, originalFeedback)
 

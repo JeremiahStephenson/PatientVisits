@@ -32,7 +32,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.jerry.patient.assessment.R
 import com.jerry.patient.assessment.cache.Feedback
-import com.jerry.patient.assessment.compose.MediumButton
+import com.jerry.patient.assessment.ui.common.LikeButton
 import com.jerry.patient.assessment.ui.common.theme.Pink500
 
 @Composable
