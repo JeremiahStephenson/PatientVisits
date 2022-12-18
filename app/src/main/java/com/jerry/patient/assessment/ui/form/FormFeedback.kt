@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.service.data.VisitsDto
 
 @Composable
 fun Feedback(
-    visitInfo: VisitsDto,
+    diagnosis: String,
     isCurrentPage: Boolean,
     getFeedback: () -> String?,
     onFeedback: (String?) -> Unit,
@@ -39,12 +39,12 @@ fun Feedback(
             textAlign = TextAlign.Center,
             text = stringResource(
                 R.string.form_question_3,
-                visitInfo.diagnosis.code.diagnosis.lowercase(),
+                diagnosis,
             )
         )
         var text by rememberSaveable { mutableStateOf(getFeedback().orEmpty()) }
         val length = remember { derivedStateOf { text.length > MIN_LENGTH } }
-        LaunchedEffect(isCurrentPage, length.value) {
+        SideEffect {
             if (isCurrentPage) {
                 onEnableOrDisableContinue(length.value)
             }
@@ -86,3 +86,15 @@ fun Feedback(
 
 private const val MAX_LENGTH = 300
 private const val MIN_LENGTH = 30
+
+@Preview(widthDp = 400, heightDp = 400)
+@Composable
+private fun FeedbackPreview() {
+    Feedback(
+        diagnosis = "Lupus",
+        isCurrentPage = true,
+        getFeedback = { "This is a preview" },
+        onFeedback = {},
+        onEnableOrDisableContinue = {}
+    )
+}

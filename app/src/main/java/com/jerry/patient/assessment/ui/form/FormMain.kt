@@ -1,5 +1,6 @@
 package com.jerry.patient.assessment.ui.form
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,11 +25,16 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.jerry.patient.assessment.R
+import com.jerry.patient.assessment.cache.Feedback
+import com.jerry.patient.assessment.extensions.givenName
 import com.jerry.patient.assessment.extensions.unboundClickable
 import com.jerry.patient.assessment.service.VisitsData
+import com.jerry.patient.assessment.service.data.VisitsDto
 import com.jerry.patient.assessment.ui.common.FadeAnimatedVisibility
 import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
 import com.jerry.patient.assessment.ui.common.MediumButton
+import com.jerry.patient.assessment.ui.common.theme.PatientTheme
+import com.jerry.patient.assessment.ui.common.theme.ThemePreviews
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +51,7 @@ fun FormMain(
 ) {
     LocalAppBarTitle.current(stringResource(R.string.feedback))
 
-    val uiState = getFormUiState(viewModel)
+    val uiState = getFormUiState(viewModel, visitInfo.feedback)
 
     var showDialog by remember { mutableStateOf(false) }
     BackHandler(uiState.feedBackChanged) {
@@ -60,6 +67,38 @@ fun FormMain(
         }
     }
 
+    FormContent(
+        visitInfo = visitInfo.visits,
+        uiState = uiState,
+        onRated = { viewModel.saveRating(it) },
+        onUnderstanding = { viewModel.saveUnderstanding(it) },
+        onFeedback = { viewModel.saveFeedback(it) },
+        onImageSelected = { viewModel.saveImage(it) }
+    ) {
+        viewModel.submit()
+    }
+
+    if (showDialog) {
+        AreYouSureDialog(
+            dismiss = { showDialog = false },
+            goBack = {
+                showDialog = false
+                navController.popBackStack()
+            }
+        )
+    }
+}
+
+@Composable
+private fun FormContent(
+    visitInfo: VisitsDto,
+    uiState: FormUiState,
+    onRated: (Int) -> Unit,
+    onUnderstanding: (Boolean) -> Unit,
+    onFeedback: (String?) -> Unit,
+    onImageSelected: (Uri?) -> Unit,
+    submit: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -76,29 +115,37 @@ fun FormMain(
             count = 4,
             userScrollEnabled = false
         ) { page ->
+            val patientName = visitInfo.patient.name.givenName
+            val doctorName = visitInfo.doctor.name.givenName
+            val diagnosis = visitInfo.diagnosis.code.diagnosis.lowercase()
             when (page) {
                 0 -> Rating(
-                    visitInfo = visitInfo.visits,
+                    patientName = patientName,
+                    doctorName = doctorName,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
-                    onRated = { viewModel.saveRating(it) },
+                    onRated = onRated,
                     getRating = { uiState.feedBack?.rating ?: 0 },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 1 -> Understanding(
-                    visitInfo = visitInfo.visits,
+                    diagnosis,
+                    doctorName,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
-                    onUnderstanding = { viewModel.saveUnderstanding(it) },
+                    onUnderstanding = onUnderstanding,
                     getUnderstanding = { uiState.feedBack?.understanding },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
                 2 -> Feedback(
-                    visitInfo = visitInfo.visits,
+                    diagnosis = diagnosis,
                     isCurrentPage = rememberCurrentPage(pagerState, page),
-                    onFeedback = { viewModel.saveFeedback(it) },
+                    onFeedback = onFeedback,
                     getFeedback = { uiState.feedBack?.feedback },
                     onEnableOrDisableContinue = { forwardEnabled = it }
                 )
-                3 -> Summary(uiState.feedBack) { viewModel.saveImage(it) }
+                3 -> Summary(
+                    results = uiState.feedBack,
+                    onImageSelected = onImageSelected
+                )
             }
         }
         val scope = rememberCoroutineScope()
@@ -107,23 +154,11 @@ fun FormMain(
             forwardEnabled = forwardEnabled,
             onBackward = { scope.moveBackward(pagerState) },
             onForward = { scope.moveForward(pagerState) },
-            onSubmit = {
-                viewModel.submit()
-            }
+            onSubmit = submit
         )
         ProgressIndicator(
             page = pagerState.currentPage,
             count = pagerState.pageCount
-        )
-    }
-
-    if (showDialog) {
-        AreYouSureDialog(
-            dismiss = { showDialog = false },
-            goBack = {
-                showDialog = false
-                navController.popBackStack()
-            }
         )
     }
 }
@@ -291,9 +326,33 @@ private fun rememberCurrentPage(
 }
 
 @Composable
-private fun getFormUiState(viewModel: FormViewModel): FormUiState {
+private fun getFormUiState(
+    viewModel: FormViewModel,
+    feedback: Feedback?
+): FormUiState {
     val feedBackChangedState = viewModel.feedbackHasChanged.collectAsStateWithLifecycle()
-    val feedBackState = viewModel.feedbackFlow.collectAsStateWithLifecycle()
+    val feedBackState = viewModel.feedbackFlow.collectAsStateWithLifecycle(feedback)
     return FormUiState(feedBackChangedState, feedBackState)
+}
+
+@ThemePreviews
+@Composable
+private fun AreYouSureDialogPreview() {
+    PatientTheme {
+        AreYouSureDialog(dismiss = {}) {}
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewButtonRow() {
+    PatientTheme {
+        ButtonRow(
+            pagerState = rememberPagerState(1),
+            forwardEnabled = true,
+            onForward = {},
+            onBackward = {}
+        ) {}
+    }
 }
 

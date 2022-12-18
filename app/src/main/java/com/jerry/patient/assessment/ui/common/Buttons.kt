@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jerry.patient.assessment.ui.common.theme.PatientTheme
 
 @Composable
 fun MediumButton(
@@ -57,4 +59,60 @@ fun LikeButton(
         contentDescription = null,
         tint = tint
     )
+}
+
+@Preview
+@Composable
+private fun MediumButtonPreview() {
+    PatientTheme {
+        MediumButton(text = "Preview") {}
+    }
+}
+
+@Preview
+@Composable
+private fun LikeButtonSelectedPreview() {
+    PatientTheme {
+        LikeButton(
+            selected = true,
+            tint = Color.Green,
+            up = true
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LikeButtonUnSelectedPreview() {
+    PatientTheme {
+        LikeButton(
+            selected = false,
+            tint = Color.Green,
+            up = true
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DisLikeButtonSelectedPreview() {
+    PatientTheme {
+        LikeButton(
+            selected = true,
+            tint = Color.Red,
+            up = false
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DisLikeButtonUnSelectedPreview() {
+    PatientTheme {
+        LikeButton(
+            selected = false,
+            tint = Color.Red,
+            up = false
+        )
+    }
 }

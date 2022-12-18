@@ -1,6 +1,7 @@
 package com.jerry.patient.assessment.ui.common.theme
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
@@ -23,7 +25,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun AssessmentTheme(
+fun PatientTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -51,3 +53,15 @@ fun AssessmentTheme(
         content = content
     )
 }
+
+@Preview(
+    name = "light",
+    group = "theme",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Preview(
+    name = "dark",
+    group = "theme",
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+annotation class ThemePreviews

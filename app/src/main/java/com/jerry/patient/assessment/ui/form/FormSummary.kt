@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -183,4 +184,18 @@ private fun Rating(rating: Int) {
             text = "x ${rating}"
         )
     }
+}
+
+@Preview(widthDp = 400, heightDp = 400)
+@Composable
+private fun SummaryPreview() {
+    Summary(
+        results = Feedback(
+            "id",
+            10,
+            true,
+            "Preview",
+        ),
+        onImageSelected = {}
+    )
 }

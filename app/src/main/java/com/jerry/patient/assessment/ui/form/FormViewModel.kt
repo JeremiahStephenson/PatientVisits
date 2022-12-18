@@ -10,7 +10,10 @@ import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.util.CoroutineContextProvider
 import com.jerry.patient.assessment.util.SavedHandle
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 
@@ -29,11 +32,6 @@ class FormViewModel(
     val feedbackSaved = _feedBackSaved.asSharedFlow()
 
     val feedbackFlow = handle.getStateFlow<Feedback?>(ARG_FEEDBACK, null)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000L),
-            originalFeedback
-        )
 
     private var feedback by SavedHandle<Feedback?>(handle, ARG_FEEDBACK, originalFeedback)
 

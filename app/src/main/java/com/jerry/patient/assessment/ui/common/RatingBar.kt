@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jerry.patient.assessment.ui.common.theme.Pink500
 import com.jerry.patient.assessment.extensions.unboundClickable
+import com.jerry.patient.assessment.ui.common.theme.Pink500
 
 @Composable
 fun RatingBar(
@@ -66,12 +66,12 @@ private fun RatingItem(
 
 @Preview
 @Composable
-fun RatingPreview() {
+private fun RatingPreview() {
     RatingBar(rating = 2) {}
 }
 
 @Preview
 @Composable
-fun TenStarsRatingPreview() {
+private fun TenStarsRatingPreview() {
     RatingBar(stars = 10, rating = 8) {}
 }

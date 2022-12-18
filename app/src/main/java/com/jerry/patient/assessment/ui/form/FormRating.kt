@@ -7,22 +7,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jerry.patient.assessment.R
-import com.jerry.patient.assessment.extensions.givenName
-import com.jerry.patient.assessment.service.data.VisitsDto
 import com.jerry.patient.assessment.ui.common.RatingBar
 
 @Composable
 fun Rating(
-    visitInfo: VisitsDto,
+    patientName: String,
+    doctorName: String,
     isCurrentPage: Boolean,
     getRating: () -> Int,
     onRated: (Int) -> Unit,
@@ -41,8 +41,8 @@ fun Rating(
             textAlign = TextAlign.Center,
             text = stringResource(
                 R.string.form_question_1_1,
-                visitInfo.patient.name.givenName,
-                visitInfo.doctor.name.givenName
+                patientName,
+                doctorName
             )
         )
         Text(
@@ -56,20 +56,29 @@ fun Rating(
             textAlign = TextAlign.Center,
             text = stringResource(R.string.form_question_1_3)
         )
-        LaunchedEffect(isCurrentPage) {
+        SideEffect {
             if (isCurrentPage) {
                 onEnableOrDisableContinue(getRating() > 0)
             }
         }
-
         RatingBar(
             rating = getRating(),
             modifier = Modifier
                 .padding(top = 24.dp)
                 .fillMaxWidth()
-        ) {
-            onRated(it)
-            onEnableOrDisableContinue(it > 0)
-        }
+        ) { onRated(it) }
     }
+}
+
+@Preview(widthDp = 400, heightDp = 400)
+@Composable
+private fun RatingPreview() {
+    Rating(
+        patientName = "John Smith",
+        doctorName = "Hugh Laurie",
+        isCurrentPage = true,
+        getRating = { 4 },
+        onRated = {},
+        onEnableOrDisableContinue = {}
+    )
 }

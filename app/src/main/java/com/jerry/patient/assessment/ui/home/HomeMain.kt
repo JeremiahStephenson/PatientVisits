@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jerry.patient.assessment.R
@@ -24,6 +25,7 @@ import com.jerry.patient.assessment.service.data.*
 import com.jerry.patient.assessment.ui.common.ErrorIndicator
 import com.jerry.patient.assessment.ui.common.LocalAppBarTitle
 import com.jerry.patient.assessment.ui.common.MediumButton
+import com.jerry.patient.assessment.ui.common.theme.PatientTheme
 import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.util.READABLE_TIME_PATTERN_PARSER
 import com.jerry.patient.assessment.util.READBLE_DATE_TIME_PATTERN_PARSER
@@ -31,6 +33,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @RootNavGraph(start = true)
 @Destination
@@ -198,3 +202,51 @@ private val List<NameDto>.readableName
 // In a real app we would have the patient sign in
 // and then we would have this id but this is a just demo
 private const val PATIENT_VISIT_ID = "0c3151bd-1cbf-4d64-b04d-cd9187a4c6e0"
+
+@Preview(widthDp = 400, heightDp = 250)
+@Composable
+private fun PatientInfoListNoFeedbackPreview() {
+    PatientTheme {
+        PatientInfoList(
+            visitsData = VisitsData(VISITS_PREVIEW, null)
+        ) {}
+    }
+}
+
+@Preview(widthDp = 400, heightDp = 250)
+@Composable
+private fun PatientInfoListWithFeedbackPreview() {
+    PatientTheme {
+        PatientInfoList(
+            visitsData = VisitsData(
+                VISITS_PREVIEW,
+                Feedback("id", 5, true, "Some text")
+            )
+        ) {}
+    }
+}
+
+val PATIENT_PREVIEW = PatientDto(
+    "patientid",
+    true,
+    listOf(NameDto("John", "Smith", listOf("John"))),
+    listOf(ContactDto("system", "value", "user")),
+    "Male",
+    LocalDate.now(),
+    listOf(AddressDto("use", listOf("some address")))
+)
+
+val DOCTOR_PREVIEW = DoctorDto(
+    "doctorid",
+    listOf(NameDto("Hugh", "Laurie", listOf("Hugh"))),
+)
+
+val VISITS_PREVIEW = VisitsDto(
+    "Bundle",
+    "id",
+    LocalDateTime.now(),
+    listOf(
+        ResourceDto(PATIENT_PREVIEW),
+        ResourceDto(DOCTOR_PREVIEW)
+    )
+)
