@@ -13,19 +13,17 @@ class HomeViewModel(
 
     private val patientInfoId = MutableStateFlow<String?>(null)
 
-    val visitsFlow = patientInfoId.transformLatest { id ->
-        if (id == null) {
-            emit(DataResource.done(null))
-            return@transformLatest
-        }
-        emit(DataResource.loading())
-        try {
-            val data = patientRepository.loadVisitsInfo(id)
+    val visitsFlow = patientInfoId.filterNotNull().flatMapLatest { id ->
+        flow {
+            val data = patientRepository.loadVisitsInfo(id!!)
             emitAll(patientRepository.feedbackFlow(data.id).transformLatest { value ->
                 emit(DataResource.done(VisitsData(data, value)))
             })
-        } catch (t: Throwable) {
-            emit(DataResource.error<VisitsData>(t))
+        }.catch {
+            emit(DataResource.error(it))
+        }
+        .onStart {
+            emit(DataResource.loading())
         }
     }.stateIn(
         scope = viewModelScope,
