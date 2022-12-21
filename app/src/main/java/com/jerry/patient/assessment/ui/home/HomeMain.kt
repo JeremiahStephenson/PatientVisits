@@ -28,13 +28,14 @@ import com.jerry.patient.assessment.ui.common.MediumButton
 import com.jerry.patient.assessment.ui.common.theme.PatientTheme
 import com.jerry.patient.assessment.ui.destinations.FormMainDestination
 import com.jerry.patient.assessment.util.READABLE_TIME_PATTERN_PARSER
-import com.jerry.patient.assessment.util.READBLE_DATE_TIME_PATTERN_PARSER
+import com.jerry.patient.assessment.util.READABLE_DATE_TIME_PATTERN_PARSER
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @RootNavGraph(start = true)
 @Destination
@@ -147,10 +148,10 @@ private fun AppointmentInfo(data: AppointmentDto) {
             stringResource(R.string.date_of_visit)
         ) {
             append(
-                "${data.period.start.format(READBLE_DATE_TIME_PATTERN_PARSER)} - ${
+                "${READABLE_DATE_TIME_PATTERN_PARSER.format(data.period.start.toInstant(ZoneOffset.UTC))} - ${
                     when (data.period.start.toLocalDate() == data.period.end.toLocalDate()) {
-                        true -> data.period.end.format(READABLE_TIME_PATTERN_PARSER)
-                        else -> data.period.end.format(READBLE_DATE_TIME_PATTERN_PARSER)
+                        true -> READABLE_TIME_PATTERN_PARSER.format(data.period.end.toInstant(ZoneOffset.UTC))
+                        else -> READABLE_DATE_TIME_PATTERN_PARSER.format(data.period.end.toInstant(ZoneOffset.UTC))
                     }
                 }"
             )

@@ -15,7 +15,7 @@ class HomeViewModel(
 
     val visitsFlow = patientInfoId.filterNotNull().flatMapLatest { id ->
         flow {
-            val data = patientRepository.loadVisitsInfo(id!!)
+            val data = patientRepository.loadVisitsInfo(id)
             emitAll(patientRepository.feedbackFlow(data.id).transformLatest { value ->
                 emit(DataResource.done(VisitsData(data, value)))
             })
